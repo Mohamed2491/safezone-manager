@@ -38,4 +38,9 @@ Syncing Across Server: All changes are instantly reflected across the server for
 
 With the Safezone Manager, your FiveM server will flourish with beautiful, functional, and dynamic zones that make gameplay smoother and more secure. ✨🌍
 
+
+Dependencies:
+- Framework: QBCore or QBOX
+- ox_lib
+
 Preview : https://www.youtube.com/watch?v=FtLxa4KZVyU
