@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Safe Zone Manager</title>
+      <link rel="stylesheet" href="style.css">
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+      <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   </head>
+   <body>
+      <!-- Manager UI -->
+      <div id="manager" style="display: none;">
+         <div class="header-container" id="header-container">
+            <button id="add-zone-btn" class="mantine-UnstyledButton-root mantine-ActionIcon-root mantine-3cdzu0" onclick="showAddZoneForm()" type="button">
+               <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M12 5l0 14"></path>
+                  <path d="M5 12l14 0"></path>
+               </svg>
+            </button>
+            <button id="return-zone-btn" onclick="hideAddZoneForm()" style="display: none;" class="mantine-UnstyledButton-root mantine-ActionIcon-root mantine-3cdzu0" onclick="showAddZoneForm()" type="button">
+               <ion-icon name="return-up-back-outline"></ion-icon>
+            </button>
+            <div class="mantine-InputWrapper-root mantine-TextInput-root mantine-1lz7zuc" id="search-container">
+               <div class="mantine-Input-wrapper mantine-TextInput-wrapper mantine-12sbrde">
+                  <div class="mantine-7aycx2 mantine-Input-icon mantine-TextInput-icon">
+                     <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                        <path d="M21 21l-6 -6"></path>
+                     </svg>
+                  </div>
+                  <input class="mantine-Input-input mantine-TextInput-input mantine-Input-withIcon mantine-TextInput-withIcon mantine-1qmbwhf" id="filter-zone-name" type="text" placeholder="Search" aria-invalid="false" value="" oninput="filterZonesByName()">
+               </div>
+            </div>
+            <button id="close-btn" onclick="closeUI()" class="mantine-UnstyledButton-root mantine-ActionIcon-root mantine-1vr4pcb" type="button">
+               <svg viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                  <path d="M11.7816 4.03157C12.0062 3.80702 12.0062 3.44295 11.7816 3.2184C11.5571 2.99385 11.193 2.99385 10.9685 3.2184L7.50005 6.68682L4.03164 3.2184C3.80708 2.99385 3.44301 2.99385 3.21846 3.2184C2.99391 3.44295 2.99391 3.80702 3.21846 4.03157L6.68688 7.49999L3.21846 10.9684C2.99391 11.193 2.99391 11.557 3.21846 11.7816C3.44301 12.0061 3.80708 12.0061 4.03164 11.7816L7.50005 8.31316L10.9685 11.7816C11.193 12.0061 11.5571 12.0061 11.7816 11.7816C12.0062 11.557 12.0062 11.193 11.7816 10.9684L8.31322 7.49999L11.7816 4.03157Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
+               </svg>
+            </button>
+         </div>
+         <div id="table-container">
+            <table class="mantine-Table-root mantine-1rqdy6n">
+               <thead>
+                  <tr>
+                     <th>
+                        <button class="mantine-UnstyledButton-root mantine-2duqt8" type="button">
+                           <div class="mantine-Group-root mantine-5f6x53">
+                              <div class="mantine-Text-root mantine-18bbwl5">ID</div>
+                              <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                 <path d="M8 9l4 -4l4 4"></path>
+                                 <path d="M16 15l-4 4l-4 -4"></path>
+                              </svg>
+                           </div>
+                        </button>
+                     </th>
+                     <th>
+                        <button class="mantine-UnstyledButton-root mantine-2duqt8" type="button">
+                           <div class="mantine-Group-root mantine-5f6x53">
+                              <div class="mantine-Text-root mantine-18bbwl5">Name</div>
+                              <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                 <path d="M6 9l6 6l6 -6"></path>
+                              </svg>
+                           </div>
+                        </button>
+                     </th>
+                     <th>
+                        <button class="mantine-UnstyledButton-root mantine-2duqt8" type="button">
+                           <div class="mantine-Group-root mantine-5f6x53">
+                              <div class="mantine-Text-root mantine-18bbwl5">Zone</div>
+                              <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                 <path d="M8 9l4 -4l4 4"></path>
+                                 <path d="M16 15l-4 4l-4 -4"></path>
+                              </svg>
+                           </div>
+                        </button>
+                     </th>
+                     <th>
+                        <button class="mantine-UnstyledButton-root mantine-2duqt8" type="button">
+                           <div class="mantine-Group-root mantine-5f6x53">
+                              <div class="mantine-Text-root mantine-18bbwl5">Radius</div>
+                              <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                 <path d="M8 9l4 -4l4 4"></path>
+                                 <path d="M16 15l-4 4l-4 -4"></path>
+                              </svg>
+                           </div>
+                        </button>
+                     </th>
+                     <th>
+                        <button class="mantine-UnstyledButton-root mantine-2duqt8" type="button">
+                           <div class="mantine-Group-root mantine-5f6x53">
+                              <div class="mantine-Text-root mantine-18bbwl5"></div>
+                           </div>
+                        </button>
+                     </th>
+                  </tr>
+               </thead>
+            </table>
+         </div>
+         <!-- Main menu showing all safe zones -->
+         <div id="zones" class="mantine-Stack-root mantine-1y9qgih" style="display: block;"></div>
+         <!-- Add more zone items as needed -->
+         <!-- Form to create a new zone -->
+         <div id="add-zone-form" style="display: none;">
+            <style>
+               .input-container {
+               display: inline-block;
+               width: 48%;
+               /* Adjust width to fit two elements per line */
+               margin-bottom: 10px;
+               /* Space between rows */
+               margin-right: 10px;
+               }
+            </style>
+            <div class="input-container">
+               <label for="zone-name" class="mantine-1hwfu2">Name</label>
+               <input class="input" class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]" required type="text" id="zone-name" placeholder="Zone Name">
+            </div>
+            <div class="input-container">
+               <label for="zone-x">X Coordinate</label>
+               <input class="input" required type="number" id="zone-x" placeholder="X Coordinate">
+            </div>
+            <div class="input-container">
+               <label for="zone-y">Y Coordinate</label>
+               <input class="input" required type="number" id="zone-y" placeholder="Y Coordinate">
+            </div>
+            <div class="input-container">
+               <label for="zone-z">Z Coordinate</label>
+               <input class="input" required type="number" id="zone-z" placeholder="Z Coordinate">
+            </div>
+            <div class="input-container1">
+               <label for="zone-radius">Radius</label>
+               <input class="input" required type="number" id="zone-radius" placeholder="Radius" max="4">
+            </div>
+            <br>
+            <div class="input-container1"></div>
+            <br>
+            <div class="mantine-8od8ev">
+               <button class="mantine-UnstyledButton-root mantine-Button-root mantine-1etwou" type="button" data-button="true" onclick="addZone()">
+                  <div class="mantine-3xbgk5 mantine-Button-inner">
+                     <span class="mantine-qo1k2 mantine-Button-label" style="text-transform: uppercase;">Confirm zone</span>
+                  </div>
+               </button>
+               <button class="mantine-UnstyledButton-root mantine-ActionIcon-root mantine-2f79iz" type="button" onclick="fillcoords()">
+                  <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
+                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                  </svg>
+               </button>
+            </div>
+         </div>
+      </div>
+      <!-- Safe Zone UI -->
+      <div class="safezone" style="display: none;">
+         <div class="Background"></div>
+         <div class="Container">
+            <h1>
+               <span class="green">SAFE</span>ZONE
+            </h1>
+         </div>
+         <h2>
+            <i class="fa-solid fa-shield-heart"></i>
+         </h2>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/animejs@3.0.1/lib/anime.min.js"></script>
+      <script src="script.js"></script>
+   </body>
+</html>
